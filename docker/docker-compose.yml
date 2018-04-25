@@ -1,0 +1,50 @@
+version: '2'
+services:
+  data_postgres:
+    env_file: .env
+    image:          "postgres:${POSTGRES_VERSION}"
+    container_name: "${PREFIX_CONTAINER}data_postgres"
+    hostname:       "${PREFIX_CONTAINER}data_postgres"
+    volumes:
+        - ./data/pgdata:/var/lib/postgresql/data
+    entrypoint: "/bin/bash"
+#        restart: always
+
+  postgres:
+    env_file: .env
+    image:          "postgres:${POSTGRES_VERSION}"
+    container_name: "${PREFIX_CONTAINER}postgres"
+    hostname:       "${PREFIX_CONTAINER}postgres"
+    ports:
+        - "127.0.0.1:${POSTGRES_PORT}:5432"
+    depends_on:
+        - data_postgres
+    volumes_from:
+        - data_postgres
+    environment:
+        - TERM=xterm
+    restart: always
+
+#  maven_daemon:
+#    env_file: .env
+#    build:
+#      context: .
+#      dockerfile: ./app/Dockerfile
+#      args:
+#        - DOCKER_USER_ID
+#        - USER_NAME
+#    image:          "${PREFIX_IMAGE}maven_daemon"
+#    container_name: "${PREFIX_CONTAINER}maven_daemon"
+#    hostname:       "${PREFIX_CONTAINER}maven_daemon"
+#    expose:
+#      - ${APP_PORT}
+#    depends_on:
+#      - postgres
+#    links:
+#      - postgres
+#    working_dir: "/home/${USER_NAME}"
+#    environment:
+#      - TERM=xterm
+#      - APP_PORT=${APP_PORT}
+#    restart: always
+

@@ -1,0 +1,18 @@
+@(client: Form[CreateClientForm])(implicit request: MessagesRequestHeader)
+  @import helper._
+
+  @request.flash.get("success").map { key =>
+  @request.messages(key)
+}
+
+@main("add") {
+  @form(routes.ClientController.addClient()) {
+  @inputText(client("name"))
+  @inputText(client("phone"))
+  @CSRF.formField
+
+  <div class="buttons">
+    <input type="submit" value="Add"/>
+  </div>
+  }
+}
