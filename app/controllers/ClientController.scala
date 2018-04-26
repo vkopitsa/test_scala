@@ -37,13 +37,13 @@ class ClientController @Inject()(repo: ClientRepository,
   }
 
   def addForm = Action { implicit request =>
-    Ok(views.html.index(createForm))
+    Ok(views.html.add(createForm))
   }
 
   def add = Action.async { implicit request =>
     createForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.index(errorForm)))
+        Future.successful(Ok(views.html.add(errorForm)))
       },
       client => {
         repo.create(client.name, client.phone).map { _ =>
@@ -67,7 +67,6 @@ class ClientController @Inject()(repo: ClientRepository,
 
   def list = Action.async { implicit request =>
     repo.list().map { clients =>
-
       Ok(views.html.list(clients, addUrl, editUrl, deleteUrl))
     }
   }
