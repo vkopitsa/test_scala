@@ -11,6 +11,8 @@
   @inputText(client("phone"))
   @CSRF.formField
 
+  <input type="hidden" name="id" value="@client("id").value" />
+
   <div class="buttons">
     <input type="submit" value="Save"/>
   </div>

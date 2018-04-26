@@ -4,13 +4,13 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.ClientController.index
-POST    /client                     controllers.ClientController.add
-GET     /clients/:id                controllers.ClientController.get(id: Long)
-GET     /clients                    controllers.ClientController.list
-GET     /clients/:id/edit           controllers.ClientController.edit(id: Long)
-POST    /clients/:id/edit           controllers.ClientController.save(id: Long)
-GET     /clients/:id/delete         controllers.ClientController.delete(id: Long)
+GET     /                   controllers.ClientController.list
+GET     /add                controllers.ClientController.addForm
+POST    /                   controllers.ClientController.add
+GET     /:id                controllers.ClientController.get(id: Long)
+GET     /:id/edit           controllers.ClientController.editForm(id: Long)
+POST    /:id/edit           controllers.ClientController.save(id: Long)
+GET     /:id/delete         controllers.ClientController.delete(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

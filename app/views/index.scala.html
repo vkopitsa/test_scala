@@ -6,7 +6,7 @@
 }
 
 @main("add") {
-  @form(routes.ClientController.addClient()) {
+  @form(routes.ClientController.add()) {
   @inputText(client("name"))
   @inputText(client("phone"))
   @CSRF.formField

@@ -17,6 +17,9 @@ class ClientController @Inject()(repo: ClientRepository,
                                 )(implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
+  private val addUrl = routes.ClientController.addForm()
+  private val editUrl = (id: Long) => routes.ClientController.editForm(id)
+  private val deleteUrl = (id: Long) => routes.ClientController.delete(id)
 
   val createForm: Form[CreateClientForm] = Form {
     mapping(
@@ -33,7 +36,7 @@ class ClientController @Inject()(repo: ClientRepository,
     )(Client.apply)(Client.unapply)
   }
 
-  def index = Action { implicit request =>
+  def addForm = Action { implicit request =>
     Ok(views.html.index(createForm))
   }
 
@@ -44,29 +47,28 @@ class ClientController @Inject()(repo: ClientRepository,
       },
       client => {
         repo.create(client.name, client.phone).map { _ =>
-          Redirect(routes.ClientController.index).flashing("success" -> "Client created")
+          Redirect(routes.ClientController.list).flashing("success" -> "Client created")
         }
       }
     )
   }
 
-  def save(id: Long) = Action.async { implicit request =>
-    updateForm.fill(repo.get(id)).bindFromRequest.fold(
+  def save(id:Long) = Action.async { implicit request =>
+    updateForm.bindFromRequest.fold(
       errorForm => {
         Future.successful(Ok(views.html.edit(errorForm)))
       },
-      client => {
-        client.id = id
-        repo.saveOrUpdate(client).map { _ =>
-          Redirect(routes.ClientController.index).flashing("success" -> "Client created")
-        }
+      success => {
+        repo.saveOrUpdate(updateForm.bindFromRequest.get)
+        Future.successful(Redirect(routes.ClientController.list).flashing("success" -> "Client updated"))
       }
     )
   }
 
   def list = Action.async { implicit request =>
     repo.list().map { clients =>
-      Ok(Json.toJson(clients))
+
+      Ok(views.html.list(clients, addUrl, editUrl, deleteUrl))
     }
   }
 
@@ -76,7 +78,7 @@ class ClientController @Inject()(repo: ClientRepository,
     }
   }
 
-  def edit(id: Long) = Action.async { implicit request =>
+  def editForm(id: Long) = Action.async { implicit request =>
     repo.get(id).map { client =>
       val form = updateForm.fill(client.get)
       Ok(views.html.edit(form))
@@ -85,7 +87,7 @@ class ClientController @Inject()(repo: ClientRepository,
 
   def delete(id: Long) = Action.async { implicit request =>
     repo.delete(id).map { client =>
-      Ok(Json.toJson(client))
+      Redirect(routes.ClientController.list).flashing("success" -> "Client removed")
     }
   }
 

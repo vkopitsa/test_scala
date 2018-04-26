@@ -1,0 +1,32 @@
+@(clients: Seq[Client], addUrl: Call, editUrl: Long => Call, deleteUrl: Long => Call)(implicit request: MessagesRequestHeader)
+  @import helper._
+
+  @request.flash.get("success").map { key =>
+  @request.messages(key)
+}
+
+@main("list") {
+  <a href="@addUrl">Create</a>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Phone</th>
+      <th></th>
+    </thead>
+    <tbody>
+    @for(c <- clients) {
+      <tr>
+        <td>@c.id</td>
+        <td>@c.name</td>
+        <td>@c.phone</td>
+        <td>
+          <a href="@editUrl(c.id)">Edit</a>
+          <a href="@deleteUrl(c.id)">Delete</a>
+        </td>
+      </tr>
+    }
+    </tbody>
+  </table>
+}
